@@ -724,6 +724,11 @@ function read_query(packet)
 
         elseif string.starts(query, "select * from ciphertextdouble where ") then
             return selectdouble_handler(query) 
+
+        elseif string.starts(query, "generate keys") then 
+            mylib.generatekeys()
+            proxy.queries:append(21, string.char(proxy.COM_QUERY) .. "select NOW()" , {resultset_is_needed = true});
+            return proxy.PROXY_SEND_QUERY
         end
     end
 end
@@ -772,7 +777,12 @@ function read_query_result(inj)
     -- for i=0,15,1 do
     --     os.remove("/home/taeyun/Desktop/mysqlproxy/datatobedecrypted" .. i .. ".txt")
     -- end
-    if inj.id >= 5 then
+    if (inj.id == 21)then
+        proxy.response.type = proxy.MYSQLD_PACKET_OK
+        return proxy.PROXY_SEND_RESULT 
+    end
+
+    if ((inj.id >= 5) and (inj.id <= 20)) then
         file = io.open("datatobedecrypted" .. (inj.id-5) .. ".txt", "w")
         for rows in inj.resultset.rows do
             --TODO: fix 502 to n+2
