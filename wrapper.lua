@@ -32,7 +32,7 @@ directorypath = os.getenv("PROXYDIR")
 
 package.cpath = directorypath .. "/tfhelib.so"
 
-numfeatures = 16
+numbits = 16
 
 require "mylib"
 
@@ -94,11 +94,9 @@ function insert_handler(query)
     for i=0,15,1
         do
         modifiedquery = "insert into ciphertext_bit" .. i .. " values("
-        -- whose fingerprint vector this is
+        -- whose data this is
         modifiedquery = modifiedquery .. id .. ", "
 
-        -- which integer it is in the fingerprint vector
-        modifiedquery = modifiedquery .. integerorder .. ", "
         -- TODO: replace 500 with n
         for j = 0,501,1
         do
@@ -138,9 +136,8 @@ function insertdouble_handler(query)
         table.insert(array, capture)
     end
 
-    fpnumber = array[1]
-    doubleorder = array[2]
-    value = array[3]
+    userid = array[1]
+    value = array[2]
 
     -- print("fpnumber = " .. fpnumber)
     -- print("doubleorder = " .. doubleorder)
@@ -169,11 +166,9 @@ function insertdouble_handler(query)
     for i=0,15,1
         do
         modifiedquery = "insert into ciphertext_integer_bit" .. i .. " values("
-        -- whose fingerprint vector this is
-        modifiedquery = modifiedquery .. fpnumber .. ", "
+        -- whose data this is
+        modifiedquery = modifiedquery .. userid .. ", "
 
-        -- which integer it is in the fingerprint vector
-        modifiedquery = modifiedquery .. doubleorder .. ", "
         -- TODO: replace 500 with n
         for j = 0,501,1
         do
@@ -194,11 +189,9 @@ function insertdouble_handler(query)
     for i=0,15,1
         do
         modifiedquery = "insert into ciphertext_fraction_bit" .. i .. " values("
-        -- whose fingerprint vector this is
-        modifiedquery = modifiedquery .. fpnumber .. ", "
+        -- whose data this is
+        modifiedquery = modifiedquery .. userid .. ", "
 
-        -- which integer it is in the fingerprint vector
-        modifiedquery = modifiedquery .. doubleorder .. ", "
         -- TODO: replace 500 with n
         for j = 0,501,1
         do
@@ -337,10 +330,10 @@ end
 function insertfpdouble_handler(query)
     isfirstloop = 1
     for k=0,1999,1 do
-        for i=0,(numfeatures-1),1 do
+        for i=0,(numbits-1),1 do
     -- for k=0,0,1 do
     --     for i=0,0,1 do
-            for j=0,(numfeatures-1),1 do
+            for j=0,(numbits-1),1 do
                 if (isfirstloop == 1) then
                     modifiedquery = "insert into ciphertext_integer_bit" .. j .. " values(1, 1, 1637271175, 2004276505, -666516563, 1729304713, -1356809664, -1869936413, -1012131888, -81238309, -462300616, 860299971, -602190008, -925909069, 655234371, -1564802283, -1984535361, -1320196416, 1692002810, -957701841, 428036460, 478881591, -1580952379, 1951245862, -1705962819, 853270236, -157945651, 1526929838, -139722771, 26846644, -933209702, 404268677, -1257311510, -1616248290, 228279360, 1047437170, 2051600578, 1241191372, -1868578770, 863786312, -1495859241, -1629068318, -44565865, -98164424, -215798803, -2077663139, 971581342, -2021614703, -530961829, 1477394689, 288495, -1312534003, 1386758288, -1530431536, -1904631002, 66772000, 1255223217, 958586892, -190426947, 1829311672, 145719620, 1929462632, -1251391054, -176587433, -1125652944, -445662554, -748008948, 509339623, -391470104, -732849583, 158084539, -12228921, -2054372925, 1816959874, -1362665577, -1534024472, -1591914337, -1158136587, 1083141273, -662269454, 1012172465, 1417617760, 36453673, -191710970, 658192304, -1641476726, -1210000879, -25493542, 293047045, 1107681229, -1664348414, -1748204514, 2022995558, -38872324, 830065133, 9011857, 282299337, 1670475247, 1690836126, -1028186596, -801474578, 42902444, -50704687, -243516013, -997263362, -1225401690, 802252001, 1186487896, -1284353764, -100576449, 676582318, -2145100594, 1683033425, -1094935695, 1683144180, 1680488413, -1630255728, -656639672, 1564076321, -1833834553, -1593281234, 1831161659, 1615002597, 1824207154, 459025412, 1697798343, 313459718, -1347945426, 836096141, 980949514, -544843979, -1994468501, 258383571, -394093064, -414605354, -2049555960, 1307885981, 219967356, 1860910095, -1666011953, -117297832, 1709752759, -890885023, 1820597530, 1481669905, -1166924111, -491333591, 993203634, -887494459, -1853493916, -310874707, 1159827182, -980938578, -625348281, -1420457294, -789040310, 1528769595, 1724984562, 560926544, -1496444385, -470481721, -1045655310, -804192352, -2062990898, -900501533, 843370838, 20577061, -1105867380, -1893656968, 409011966, -587677631, 1159898328, -1007301585, 1673040111, 2146029013, 119605211, -1503345798, -1761296546, 725929185, 1585024816, -1425303521, -691342249, -43607895, -1650904742, 140297363, -1705204550, 911418790, -1925574956, 685928194, -304062215, -2052857549, 1921169068, 1255962757, 946151976, -1149864910, 766856816, -385361456, -633066377, 611362319, -776688396, 1238608369, 670617574, 1650361526, 346247183, 1153248286, -1737618638, 671977266, -758608409, -2037506093, 1219810505, 657418921, -1833048430, -172093192, -1217841533, 311373412, 1862308388, -874887412, 1240621969, 254891535, 1637231912, 1667521824, 1726644516, 2016017228, -1236412339, 2057497499, -193276871, 327498780, -997723537, 59526291, 1279930375, -216108397, 1551622029, 265182255, 1443389150, 1321686342, -1201891350, 1064446455, -1435260046, -1284245601, -1127548378, 1281061713, -864299893, 2086123939, 444456246, 1975402221, -1636272106, 1369536364, 1066886132, -748823249, 814832932, -51315521, 286305476, -594607819, 2016881070, 1427230067, -903626061, 1782805339, -583779394, -2120086907, 1814642973, -1433289206, 722328925, -1071713780, 256245695, 721815975, -1734057946, 1147086050, 475656380, 1151048528, 1746292297, -873075571, 212621170, -410544118, 878009127, 1996527801, 653893596, 1489139249, 956165044, -1326744191, 2033969995, 1474205141, -671347696, 1246392068, 1701861826, 1528886838, 829643135, -1458837968, 1488387503, -42705576, -1577786411, 1283746301, -1363384356, 1472831112, -1727197674, -989787963, 1888337148, 906453654, -1941187179, 784997720, 458610808, -649648907, 2075908159, 777958449, 93118247, -758103108, 905214479, 1626594245, -884082920, -798528526, 394734893, 263631016, -1878642245, -765656594, -1994708626, 974008383, -572420539, -697295358, 472197093, 1235804534, 1989959632, -253226070, -1900331922, -1062266403, -1731605567, -1775172132, 1767157799, 1234844579, 36190840, -1204187303, 1967891393, 1150638194, -1317651337, 1825811703, 801314040, 1770123532, 1146890514, 1983851741, 879873163, -1928086105, -726272542, 1538932736, -882262414, -507525228, -1845501093, 1018035742, 317785512, -543233955, 811987771, 1428780836, -1495942875, -1509581027, 2037116422, -569911660, 149626748, -271467087, 183453292, -99768958, -1712817657, -366204779, 1541791621, 2144520600, -1119901954, -1510313075, 934675675, -1470308464, 1093442948, -586444082, -328251543, 893942630, -705022724, -950378317, -1185272339, 952921078, 1102273082, 1827331262, 1724330518, -515195354, -346062466, 1988711385, 499603650, -1151339125, -1378926782, -1401401456, -1202112239, 1527804679, -891090887, -750469865, 328296572, 709694137, -1215977048, -136797099, 936762080, 889498700, 2037607967, -1123806034, -1789214810, 582850709, 1018228514, -106351238, 1396440162, -905426114, 507393688, -360912211, 674902274, -581181020, 819235617, 908161050, 406709282, -502106117, -1675591868, -1899064027, -839147620, 864734549, 1923513410, -408596065, -796771855, -425957670, -1055147071, -1335745166, -539279532, 929675166, 1949496413, 1188997019, 821823889, 1497449791, 1628221952, -930199812, 1691126992, 840738464, -423766139, 1393815751, 773651416, -1705504676, -1043229964, -1559415373, 648980321, -1358508065, 1473131784, -203216598, 962451907, 935370222, 1055436112, -1946658618, -82289873, 1739217746, 48220689, 361663884, 1604685711, 1926821625, -1946619462, -268101896, -111726311, 937892160, -777754282, -1524886903, 1964253337, 147389966, 1109711828, -588317963, 1471375176, 1233547476, -91828960, -48987778, 641898141, -1901806398, 1249277914, -46639007, 438025649, -1258321776, 757527561, -1794761236, 74174912, 547194644, 1181460969, 73777364, 1439257763, -1916597516, -1615446929, -394880906, 661137268, -1532553668, 1952780243, -1527917313, -414816037, 579351930, -379486469, 2068366676, 133089090, 1973967286, 1100421180, -1207516378, 1619864371, 1820796851, -358209733, 629001030, -503722617, -1766466051, -1643333034, 960368301, -1050197087, -1247412875, -463281669, -602048671, 5.9536e-10)"
                     
@@ -354,10 +347,10 @@ function insertfpdouble_handler(query)
         end
     end
     for k=0,1999,1 do
-        for i=0,(numfeatures-1),1 do
+        for i=0,(numbits-1),1 do
     -- for k=0,0,1 do
     --     for i=0,0,1 do
-            for j=0,(numfeatures-1),1 do
+            for j=0,(numbits-1),1 do
                 proxy.queries:append(3, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
                 modifiedquery = "insert into ciphertext_fraction_bit" .. j .. " values(1, 1, -1819007354, -1543470003, -2140763288, 905086179, 986174317, -480196605, -676762731, 1137322307, -2011598526, 1118800508, -879643378, 2074839588, 1185436086, 283780431, -1092223728, 2104917668, 1137691689, 1340056065, -1346432029, -1539101295, 409080100, 1979976967, -1700359896, 1064918651, 643295375, 2116227398, 1149980309, -754479263, -411953140, 1954255407, -899947215, -2075737327, 1080801431, -921542695, 1037842576, 606576669, -485067512, -1799957383, -541673270, 925564353, 2111067434, 621153485, 1951918224, 463664638, 1638291119, -1644294406, -2058031942, -677723119, -545583632, -2012878511, 268920045, 1056691476, -220351151, 527711337, -1199012343, -625991054, 896147494, 1300118177, -597174672, -487318187, -379765935, -1470614145, 897051194, 654036940, -1739978265, -283915365, 654888036, 282341680, 333802061, 378351438, -665892457, 704540289, 1870856574, -1993562368, 1827299758, -351164456, 958502163, 1816929993, -1372087035, 1158052998, 653040936, -378465651, 338563995, 1383142897, 1189667766, 364105148, 459719454, 1290265020, -1623687651, 32560850, 2114999915, 877857864, 277579026, 1094331461, 579891353, 712065619, -1706550388, 115000953, -1317288842, 1375941704, 1616437824, -859844517, 751332524, -511969272, -801164897, 463456182, -1124916231, 357171434, 1741386430, -1175842605, 1711280042, -2119914268, -1647768851, 1215875238, -671935404, -1190069388, -1656431298, -1904728430, 471277788, 492068770, -2115825958, 563469875, -2131875015, -1734530658, -212362047, 97101747, -1186489459, -1780191689, 45458553, -1216742913, -540773704, 508884791, 1726816296, -500096598, -205657206, 580104219, -1601180393, 2039357654, 906552577, -1699345116, -1261553629, 602221052, -970782729, -1454214061, 2136134912, -226580081, 1879959663, -1580536007, -382974377, -1147849223, 746902524, 773355038, 1165026289, -113489801, -97879132, 242553029, -1424428864, -1300876218, -1651254095, -1274715367, 807005392, 1889109797, -26025575, -660519817, 1095574514, 1529432874, -106855324, -772978348, 181670557, -1480460391, 2141832578, 1790124930, -1746433210, -525473679, 1717908386, 89422324, -1985452097, -87006538, -643039857, -460855017, -703914434, -2019972044, 977149629, 597406018, 1343787724, 570504917, -1977032980, -26235909, -443844814, -1823856682, -1356892384, 694512960, 2125529178, -1927375909, 585814462, 1406418960, -868387495, 1664034836, 247453994, 928927753, -1354987399, 1796914906, -834643472, -140131657, -2034829368, -338462051, -635363000, 1234951363, -1829609352, 545726487, -1233227424, -788940551, 446858561, -1886797402, -1439408670, 1239482216, 1138259925, 560750198, 301454919, -719942382, 1598314340, -1563172303, -2062021729, 1895006717, -1148396193, -1881575943, -1079189272, -2070674504, -2056284879, -1772127258, 2053871686, 216743425, -1903341374, 1367605705, 1894700926, 844953775, 1608286754, -610474010, -1570269194, 1492422028, -142009054, 866750428, 1215209518, 260450286, 2010707020, 879073486, -270506746, 382718683, -1207961778, -379097086, -1977583541, -1278322556, 1531836185, 1527534458, -1476601948, 118680681, 801795652, -2144259823, -125845913, -1674611517, 1556330198, 558236942, -1598846838, 1596032420, -587984700, -1367834522, 1007869855, 1699266926, -1491447339, 341459632, 275034397, 1372849445, 1811373936, 936806521, 1759536344, 1450956004, -2092355151, 1482998439, 1890733957, 140809976, -1747738829, 954530974, 920659499, 1129724437, 104962819, 951646356, -1706702995, -1918982252, 749479354, -81707578, 383154771, 1379112700, 1187050246, -1786159356, 420590062, 1713567631, -1266846495, -1301691064, 1844239467, 1600623906, -775394924, 48698670, -575681677, 1709282987, 1750924466, 1842557821, 1492169113, -2031125140, 1944539358, 972788137, 574462057, -615272850, 1008315455, 205908544, 1787035362, 987674854, 988967562, -2049917046, 333423479, 724287826, 12188725, 690198403, -1325631024, -1133538396, 1885239589, 110821243, -906002502, -1937414594, -317773600, -1384029892, -976309802, -1362571945, -1220106556, -2046047477, 1437975862, -675692372, -1374750544, 1974780440, 1160933907, -51741899, -1472554297, -1900564959, 716847521, -552192612, 969799272, -909789571, 897681392, 334088177, -591090628, -1274776839, -1106215140, 1153182806, -2103281260, 1172916102, 630046565, -1006919732, 1885674992, -1671816934, 1259163620, -424861682, 899326859, 526594133, -217751254, -979888738, -2061247054, -701413114, 1445052619, 1392348700, -608540398, 675154919, -1945938166, 94631255, 787107097, -73482671, -1784423959, 1259592811, -612920607, -1479769307, 97665696, 51359738, 2115709878, -1934063586, -2077915503, 107504871, 731368032, 1825305914, 14632489, 1358718430, 1164520875, -1455326063, -195521154, 1086095105, -1676254313, -932839193, -1884203420, 2114168212, -507480584, -605347089, -1895989313, -670070161, 379424624, 435135748, 490819278, -857363134, 863070099, 303836361, -2065180302, -1672547246, -87421003, 769808477, 1949464117, -1268595875, 1756708132, 1054428818, 1865619028, -310231730, -672060109, -2091734192, -1580628376, 1734545438, -552004530, 1502590942, -1822718984, 958475235, 1710502595, -1387146763, -228075672, 1880263565, 1848764059, -1043557956, 47476110, 1919109540, 1053689876, 155693576, 20945085, 504448254, -220453358, 350087062, 1174551501, 1924981311, 559388935, -632617375, -1253090909, 413122761, -841488751, -1698273007, -1512760958, 1843439410, 2065786360, 2073043088, 1966262862, 920045033, 59141178, -1142979721, 1868831141, -1943852798, -2126503071, -377774213, 1863006953, 617558383, -1838882343, -1697945706, -625672064, -297327647, -1668845067, -1296518551, -1159746503, 969983278, 684169581, 1705510422, -1238951906, 2001617019, 1682749550, -1121898463, 1973189029, -350677216, 1971888693, 1199924495, -1276208505, 1284473853, 1241670505, -1503976659, -1891360581, 1840740862, -157112971, 1222206287, 88616343, 313896645, 151256668, 232898391, -1862170110, 648317135, 40880062, -495125024, -1414978546, 269616157, -1430108120, 757404188, 822154514, 1456193988, -1239510186, 5.9536e-10)"
                 
@@ -410,7 +403,7 @@ function drop_handler(query)
     return proxy.PROXY_SEND_QUERY
 end
 
--- asssumes the first field given in where clause is id, and the second is integerorder
+-- asssumes the first field given in where clause is id
 function select_handler(query)
     local array = {}
 
@@ -418,24 +411,16 @@ function select_handler(query)
         table.insert(array, capture)
     end
 
-    fpnumber = array[1]
-    doubleorder = array[2]
+    userid = array[1]
 
     for i=0,15,1
         do
-        modifiedquery = "select * from ciphertext_integer_bit" .. i .. " where fpnumber = " .. fpnumber .. " and doubleorder = " .. doubleorder 
+        modifiedquery = "select * from ciphertext_bit" .. i .. " where userid = " .. userid
 
         -- print("modifiedquery = " .. modifiedquery)
         proxy.queries:append((i+5), string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
     end    
 
-    for i=0,15,1
-        do
-        modifiedquery = "select * from ciphertext_fraction_bit" .. i .. " where fpnumber = " .. fpnumber .. " and doubleorder = " .. doubleorder 
-
-        -- print("modifiedquery = " .. modifiedquery)
-        proxy.queries:append((i+5), string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
-    end    
 
     -- for i=0,15,1
     --     do
@@ -449,7 +434,7 @@ function select_handler(query)
     return proxy.PROXY_SEND_QUERY
 end
 
--- asssumes the first field given in where clause is fpnumber, and the second is doubleorder
+-- asssumes the first field given in where clause is userid
 function selectdouble_handler(query)
     local array = {}
     for capture in string.gmatch(query, "%d+") do
@@ -458,23 +443,22 @@ function selectdouble_handler(query)
 
     id = array[1]
     print("user id the user input = " .. id)
-    integerorder = array[2]
 
-    for i=0,(numfeatures-1),1
+    for i=0,(numbits-1),1
         do
-        modifiedquery = "select * from ciphertext_integer_bit" .. i .. " where fpnumber = " .. id .. " and integerorder = " .. integerorder 
+        modifiedquery = "select * from ciphertext_integer_bit" .. i .. " where userid = " .. id 
 
         -- print("modifiedquery = " .. modifiedquery)
         proxy.queries:append((-5-i), string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
     end    
 
 
-    for i=0,(numfeatures-1),1
+    for i=0,(numbits-1),1
         do
-        modifiedquery = "select * from ciphertext_fraction_bit" .. i .. " where fpnumber = " .. id .. " and integerorder = " .. integerorder 
+        modifiedquery = "select * from ciphertext_fraction_bit" .. i .. " where userid = " .. id 
 
         -- print("modifiedquery = " .. modifiedquery)
-        proxy.queries:append((-5-(numfeatures-1)-i), string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+        proxy.queries:append((-5-(numbits-1)-i), string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
     end    
 
     -- for i=0,15,1
@@ -563,16 +547,14 @@ end
 function createdouble_handler(query)
     print("creating a table ciphertext...")
 
-    for i=0,(numfeatures-1),1
+    for i=0,(numbits-1),1
         do
         -- integer bit0 contains the least significant bit
         -- fraction bit0 contains the most fignificant bit (1/2)
         modifiedquery = "create table ciphertext_integer_bit" .. i .. " ("
-        -- whose fingerprint vector this is
-        modifiedquery = modifiedquery .. "fpnumber int, "
+        -- whose data this is
+        modifiedquery = modifiedquery .. "userid int, "
 
-        -- which integer it is in the fingerprint vector
-        modifiedquery = modifiedquery .. "integerorder int, "
         -- TODO: replace 500 with n
         for j = 0,499,1
         do
@@ -587,16 +569,14 @@ function createdouble_handler(query)
         
     end      
     
-    for i=0,(numfeatures-1),1
+    for i=0,(numbits-1),1
         do
         -- integer bit0 contains the least significant bit
         -- fraction bit0 contains the most fignificant bit (1/2)
         modifiedquery = "create table ciphertext_fraction_bit" .. i .. " ("
-        -- whose fingerprint vector this is
-        modifiedquery = modifiedquery .. "fpnumber int, "
+        -- whose data this is
+        modifiedquery = modifiedquery .. "userid int, "
 
-        -- which integer it is in the fingerprint vector
-        modifiedquery = modifiedquery .. "integerorder int, "
         -- TODO: replace 500 with n
         for j = 0,499,1
         do
@@ -608,7 +588,7 @@ function createdouble_handler(query)
         end
         -- print("modifiedquery = " .. modifiedquery)
         -- TODO: fix 15
-        if i == (numfeatures-1) then
+        if i == (numbits-1) then
             proxy.queries:append(-1, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
         else
             proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
@@ -623,18 +603,18 @@ end
 function dropdouble_handler(query)
     print("dropping a table ciphertext...")
 
-    for i=0,(numfeatures-1),1
+    for i=0,(numbits-1),1
         do
         modifiedquery = "drop table ciphertext_integer_bit" .. i 
         proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
         
     end      
     
-    for i=0,(numfeatures-1),1
+    for i=0,(numbits-1),1
         do
         modifiedquery = "drop table ciphertext_fraction_bit" .. i 
         
-        if i == (numfeatures-1) then
+        if i == (numbits-1) then
             proxy.queries:append(-1, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
         else
             proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
@@ -660,16 +640,12 @@ function read_query(packet)
             print("creating a table ciphertext...")
 
 
-            --TODO: change 15 to numfeatures-1
             for i=0,15,1
                 do
                 modifiedquery = "create table ciphertext_bit" .. i .. " ("
-                -- whose fingerprint vector this is
-                modifiedquery = modifiedquery .. "fpnumber int, "
+                -- whose data this is
+                modifiedquery = modifiedquery .. "userid int, "
 
-                -- which integer it is in the fingerprint vector
-                modifiedquery = modifiedquery .. "integerorder int, "
-                -- TODO: replace 500 with n
                 for j = 0,499,1
                 do
                     modifiedquery = modifiedquery .. tostring(j) .. "th_a int, "
@@ -679,7 +655,6 @@ function read_query(packet)
                     end
                 end
                 -- print("modifiedquery = " .. modifiedquery)
-                -- TODO: fix 15
                 if i == 15 then
                     proxy.queries:append(-1, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
                 else
@@ -771,7 +746,7 @@ function read_query_result(inj)
     originalquery = inj.query:sub(2)
     -- print("inj.id = " .. inj.id)
     -- if not string.starts(originalquery, "select * from ciphertext where ") then
-    if inj.id <= 4 then
+    if ((inj.id <= 4) and (inj.id > -5)) then
         -- print("inj.id = " .. inj.id)
         -- print("this was not a select query")
         -- print(originalquery)
@@ -799,7 +774,7 @@ function read_query_result(inj)
         file = io.open("datatobedecrypted" .. (inj.id-5) .. ".txt", "w")
         for rows in inj.resultset.rows do
             --TODO: fix 502 to n+2
-            for i = 3,504,1 do
+            for i = 2,503,1 do
                 file:write(rows[i] .. "\n")
                 -- print("injected query returned: " .. rows[i])
             end
@@ -842,13 +817,13 @@ function read_query_result(inj)
         file = io.open("doubletobedecrypted" .. (-inj.id-5) .. ".txt", "w")
         for rows in inj.resultset.rows do
             --TODO: fix 502 to n+2
-            for i = 3,504,1 do
+            for i = 2,503,1 do
                 file:write(rows[i] .. "\n")
                 -- print("injected query returned: " .. rows[i])
             end
         end
         file:close()
-        decrypted = mylib.HOMdecrypt()
+        decrypted = mylib.HOMdecryptdouble()
         -- for i,val in ipairs(decrypted) do
         --     print(i,val)
         -- end
@@ -861,8 +836,8 @@ function read_query_result(inj)
             print("decrypted value = " .. decrypted)
 
             --delete datatobedecrypted files that were created
-            --TODO: fix numfeatures-2 to some expression that involves numberofintegerbits and numberoffractionbits
-            for i=0,(2*numfeatures-2),1 do
+            --TODO: fix numbits-2 to some expression that involves numberofintegerbits and numberoffractionbits
+            for i=0,(2*numbits-2),1 do
                 os.remove("doubletobedecrypted" .. i .. ".txt")
             end
 

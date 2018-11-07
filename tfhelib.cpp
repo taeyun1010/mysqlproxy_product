@@ -120,7 +120,7 @@ bool is_file_empty(std::ifstream& pFile)
 }
 
 //decrypts ciphertext in /home/taeyun/Desktop/mysqlproxy/datatobedecrypted.txt and returns resulting integer
-static int decryptCiphertext(lua_State *L){
+static int decryptinteger(lua_State *L){
     string line;
     int16_t int_answer = 0;
     //reads the secret key from file
@@ -184,78 +184,128 @@ static int decryptCiphertext(lua_State *L){
     return 1;
 }
 
-//decrypts ciphertext in /home/taeyun/Desktop/mysqlproxy/doubletobedecrypted.txt and returns resulting double
-static int decryptDouble(lua_State *L){
-    string line;
-    double double_answer = 0;
-    //reads the secret key from file
-    FILE* secret_key = fopen("secret.key","rb");
-    key = new_tfheGateBootstrappingSecretKeySet_fromFile(secret_key);
-    fclose(secret_key);
-    //if necessary, the params are inside the key
-    const TFheGateBootstrappingParameterSet* params = key->params;
+// //decrypts ciphertext in /home/taeyun/Desktop/mysqlproxy/doubletobedecrypted.txt and returns resulting double
+// static int decryptDouble(lua_State *L){
+//     string line;
+//     double double_answer = 0;
+//     //reads the secret key from file
+//     FILE* secret_key = fopen("secret.key","rb");
+//     key = new_tfheGateBootstrappingSecretKeySet_fromFile(secret_key);
+//     fclose(secret_key);
+//     //if necessary, the params are inside the key
+//     const TFheGateBootstrappingParameterSet* params = key->params;
 
-    //read the 16 ciphertexts of the result
-    LweSample* integerpart = new_gate_bootstrapping_ciphertext_array(integerbitsize, params);
-    LweSample* fractionpart = new_gate_bootstrapping_ciphertext_array(fractionbitsize, params);
-    LweSample *ciphertext = new_gate_bootstrapping_ciphertext_array(integerbitsize + fractionbitsize,params);
-    const int32_t n = params->in_out_params->n;
-    // //TODO: fix 15
-    // ifstream inputfile ("/home/taeyun/Desktop/mysqlproxy/datatobedecrypted15.txt");
-    // if (is_file_empty(inputfile)){
-    //     lua_pushnil(L);
-    //     return 1;
+//     //read the 16 ciphertexts of the result
+//     LweSample* integerpart = new_gate_bootstrapping_ciphertext_array(integerbitsize, params);
+//     LweSample* fractionpart = new_gate_bootstrapping_ciphertext_array(fractionbitsize, params);
+//     LweSample *ciphertext = new_gate_bootstrapping_ciphertext_array(integerbitsize + fractionbitsize,params);
+//     const int32_t n = params->in_out_params->n;
+//     // //TODO: fix 15
+//     // ifstream inputfile ("/home/taeyun/Desktop/mysqlproxy/datatobedecrypted15.txt");
+//     // if (is_file_empty(inputfile)){
+//     //     lua_pushnil(L);
+//     //     return 1;
+//     // }
+
+//     for(int i=0; i<(integerbitsize + fractionbitsize); i++){
+//         ifstream inputfile ("doubletobedecrypted" + to_string(i)+ ".txt");
+//         if (is_file_empty(inputfile)){
+//             lua_pushnil(L);
+//             return 1;
+//         }
+//     }
+
+//     for (int i=0; i<(integerbitsize + fractionbitsize); i++) {
+//         ifstream inputfile ("doubletobedecrypted" + to_string(i) + ".txt");
+//         // if (is_file_empty(inputfile)){
+//         //     lua_pushnil(L);
+//         //     return 1;
+//         // }
+//         // std::cout << "printing " << i << "th ciphertext" << std::endl;
+//         for (int j=0; j<n; j++){
+//             // std::cout << "j = " << j << std::endl;
+//             // std::cout << "*ciphertext1[" << i << "]->a = " << *(ciphertext1[i].a + sizeof(Torus32) * j) <<std::endl;
+//             // *(answer[i].a + sizeof(answer[i].a) * j) = *(ciphertext1[i].a + sizeof(ciphertext1[i].a) * j);
+//             getline(inputfile, line);
+//             ciphertext[i].a[j] = stoi(line);
+        
+//         }
+//         // std::cout << "ciphertext1[" << i << "]->b = " << ciphertext1[i].b << std::endl;
+//         // std::cout << "ciphertext1[" << i << "]->current_variance = " << ciphertext1[i].current_variance << std::endl;
+//         // *answer[i].a = *ciphertext1[i].a;
+//         getline(inputfile, line);
+//         ciphertext[i].b = stoi(line);
+//         getline(inputfile, line);
+//         ciphertext[i].current_variance = stod(line);
+//         inputfile.close();
+//     }
+
+//     int int_answer;
+
+//     //decrypt and rebuild the answer
+//     for (int i=0; i<16; i++) {
+//         int ai = bootsSymDecrypt(&ciphertext[i], key)>0;
+//         int_answer |= (ai<<i);
+//     }
+
+//     // std::cout << "answer = " << int_answer << std::endl;
+    
+//     lua_pushnumber(L, double_answer);
+//     return 1;
+// }
+
+// decrypts given Double struct
+double decryptDouble(Double d, TFheGateBootstrappingSecretKeySet* key){
+	double result;
+	LweSample* integerpart = d.integerpart;
+	LweSample* fractionpart = d.fractionpart;
+
+    // cout << "start of integerpart" << endl;
+    // for(int i=0 ; i < integerbitsize; i++){
+    //     int temp = bootsSymDecrypt(&integerpart[i],key);
+	// 	cout << "temp[" << i << "] = " << temp << endl;
+    // }
+    // cout << "end of integerpart" << endl;
+
+
+    // cout << "start of fractionpart" << endl;
+    // for(int i=0 ; i < integerbitsize; i++){
+    //     int temp = bootsSymDecrypt(&fractionpart[i],key);
+	// 	cout << "temp[" << i << "] = " << temp << endl;
+    // }
+    // cout << "end of fractionpart" << endl;
+
+    //
+    // //decrypt and rebuild the 32-bit plaintext answer
+    // int32_t int_answer = 0;
+    // for (int i=0; i<integerbitsize; i++) {
+    //     int ai = bootsSymDecrypt(&integerpart[i], key);
+    //     int_answer |= (ai<<i);
+    // }
+    // cout << "int_answer = " << int_answer << endl;
+    //
+
+	int decryptedintpart = decryptIntegerpart(integerpart, key);
+	// cout << "decryptedintpart = " << decryptedintpart << endl;
+	double decryptedfracpart = decryptFractionpart(fractionpart, key);
+	// cout << "decryptedfracpart = " << decryptedfracpart << endl;
+
+    // //if the plaintext value is going to be negative
+    // if (decryptedintpart < 0){
+    //     result = decryptedintpart + decryptedfracpart;
+    // }
+    // else{
+	//     result = decryptedintpart + decryptedfracpart;
     // }
 
-    for(int i=0; i<(integerbitsize + fractionbitsize); i++){
-        ifstream inputfile ("doubletobedecrypted" + to_string(i)+ ".txt");
-        if (is_file_empty(inputfile)){
-            lua_pushnil(L);
-            return 1;
-        }
-    }
 
-    for (int i=0; i<(integerbitsize + fractionbitsize); i++) {
-        ifstream inputfile ("doubletobedecrypted" + to_string(i) + ".txt");
-        // if (is_file_empty(inputfile)){
-        //     lua_pushnil(L);
-        //     return 1;
-        // }
-        // std::cout << "printing " << i << "th ciphertext" << std::endl;
-        for (int j=0; j<n; j++){
-            // std::cout << "j = " << j << std::endl;
-            // std::cout << "*ciphertext1[" << i << "]->a = " << *(ciphertext1[i].a + sizeof(Torus32) * j) <<std::endl;
-            // *(answer[i].a + sizeof(answer[i].a) * j) = *(ciphertext1[i].a + sizeof(ciphertext1[i].a) * j);
-            getline(inputfile, line);
-            ciphertext[i].a[j] = stoi(line);
-        
-        }
-        // std::cout << "ciphertext1[" << i << "]->b = " << ciphertext1[i].b << std::endl;
-        // std::cout << "ciphertext1[" << i << "]->current_variance = " << ciphertext1[i].current_variance << std::endl;
-        // *answer[i].a = *ciphertext1[i].a;
-        getline(inputfile, line);
-        ciphertext[i].b = stoi(line);
-        getline(inputfile, line);
-        ciphertext[i].current_variance = stod(line);
-        inputfile.close();
-    }
+    result = decryptedintpart + decryptedfracpart;
 
-    int int_answer;
-
-    //decrypt and rebuild the answer
-    for (int i=0; i<16; i++) {
-        int ai = bootsSymDecrypt(&ciphertext[i], key)>0;
-        int_answer |= (ai<<i);
-    }
-
-    // std::cout << "answer = " << int_answer << std::endl;
-    
-    lua_pushnumber(L, double_answer);
-    return 1;
+    return result;
 }
 
 //encrypts given integer
-static int encryptInteger(lua_State *L){
+static int encryptinteger(lua_State *L){
     //check and fetch the arguments
     //double arg1 = luaL_checknumber (L, 1);
     int16_t plaintext = luaL_checknumber (L, 1);
@@ -607,6 +657,71 @@ static int encryptdouble(lua_State *L){
 
 }
 
+//decrypts ciphertext in /home/taeyun/Desktop/mysqlproxy/doubletobedecrypted.txt and returns resulting double
+static int decryptdouble(lua_State *L){
+    string line;
+    int16_t int_answer = 0;
+    //reads the secret key from file
+    FILE* secret_key = fopen("secret.key","rb");
+    key = new_tfheGateBootstrappingSecretKeySet_fromFile(secret_key);
+    fclose(secret_key);
+    //if necessary, the params are inside the key
+    const TFheGateBootstrappingParameterSet* params = key->params;
+
+    //read the 16 ciphertexts of the result
+    LweSample* ciphertext = new_gate_bootstrapping_ciphertext_array(bitsize, params);
+    const int32_t n = params->in_out_params->n;
+    // //TODO: fix 15
+    // ifstream inputfile ("/home/taeyun/Desktop/mysqlproxy/datatobedecrypted15.txt");
+    // if (is_file_empty(inputfile)){
+    //     lua_pushnil(L);
+    //     return 1;
+    // }
+
+    for(int i=0; i<16; i++){
+        ifstream inputfile ("doubletobedecrypted" + to_string(i)+ ".txt");
+        if (is_file_empty(inputfile)){
+            lua_pushnil(L);
+            return 1;
+        }
+    }
+
+    for (int i=0; i<16; i++) {
+        ifstream inputfile ("doubletobedecrypted" + to_string(i) + ".txt");
+        // if (is_file_empty(inputfile)){
+        //     lua_pushnil(L);
+        //     return 1;
+        // }
+        // std::cout << "printing " << i << "th ciphertext" << std::endl;
+        for (int j=0; j<n; j++){
+            // std::cout << "j = " << j << std::endl;
+            // std::cout << "*ciphertext1[" << i << "]->a = " << *(ciphertext1[i].a + sizeof(Torus32) * j) <<std::endl;
+            // *(answer[i].a + sizeof(answer[i].a) * j) = *(ciphertext1[i].a + sizeof(ciphertext1[i].a) * j);
+            getline(inputfile, line);
+            ciphertext[i].a[j] = stoi(line);
+        
+        }
+        // std::cout << "ciphertext1[" << i << "]->b = " << ciphertext1[i].b << std::endl;
+        // std::cout << "ciphertext1[" << i << "]->current_variance = " << ciphertext1[i].current_variance << std::endl;
+        // *answer[i].a = *ciphertext1[i].a;
+        getline(inputfile, line);
+        ciphertext[i].b = stoi(line);
+        getline(inputfile, line);
+        ciphertext[i].current_variance = stod(line);
+        inputfile.close();
+    }
+    //decrypt and rebuild the answer
+    for (int i=0; i<16; i++) {
+        int ai = bootsSymDecrypt(&ciphertext[i], key)>0;
+        int_answer |= (ai<<i);
+    }
+
+    // std::cout << "answer = " << int_answer << std::endl;
+    
+    lua_pushnumber(L, int_answer);
+    return 1;
+}
+
 
 // //encrypts given integer
 // static int encryptInteger(lua_State *L){
@@ -657,9 +772,10 @@ static int encryptdouble(lua_State *L){
 
 //library to be registered
 static const struct luaL_Reg mylib [] = {
-      {"HOMencrypt", encryptInteger},
-      {"HOMdecrypt", decryptCiphertext},
+      {"HOMencrypt", encryptinteger},
+      {"HOMdecrypt", decryptinteger},
       {"HOMencryptdouble", encryptdouble},
+      {"HOMdecryptdouble", decryptdouble},
       {NULL, NULL}  /* sentinel */
     };
 
