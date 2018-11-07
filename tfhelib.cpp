@@ -143,6 +143,8 @@ static int decryptinteger(lua_State *L){
     for(int i=0; i<16; i++){
         ifstream inputfile ("datatobedecrypted" + to_string(i)+ ".txt");
         if (is_file_empty(inputfile)){
+            delete_gate_bootstrapping_secret_keyset(key);
+            delete_gate_bootstrapping_ciphertext_array(bitsize, ciphertext);
             lua_pushnil(L);
             return 1;
         }
@@ -179,7 +181,10 @@ static int decryptinteger(lua_State *L){
     }
 
     // std::cout << "answer = " << int_answer << std::endl;
-    
+    delete_gate_bootstrapping_secret_keyset(key);
+    delete_gate_bootstrapping_ciphertext_array(bitsize, ciphertext);
+
+
     lua_pushnumber(L, int_answer);
     return 1;
 }
@@ -399,6 +404,7 @@ static int encryptinteger(lua_State *L){
 
     // cout << "got to here" << endl;
     delete_gate_bootstrapping_ciphertext_array(bitsize, ciphertext);    
+    delete_gate_bootstrapping_secret_keyset(key);
     // cout << "got to here2 " << endl;
     //return number of results
     //TODO: replace 502 with n+2
@@ -674,6 +680,7 @@ static int encryptdouble(lua_State *L){
     // cout << "got to here" << endl;
     delete_gate_bootstrapping_ciphertext_array(integerbitsize, integerpart);    
     delete_gate_bootstrapping_ciphertext_array(fractionbitsize, fractionpart);
+    delete_gate_bootstrapping_secret_keyset(key);
     // cout << "got to here2 " << endl;
     //return number of results
     //TODO: replace 502 with n+2
@@ -695,7 +702,7 @@ static int decryptdouble(lua_State *L){
     const TFheGateBootstrappingParameterSet* params = key->params;
 
     //read the 16 ciphertexts of the result
-    LweSample* intergerpart = new_gate_bootstrapping_ciphertext_array(bitsize, params);
+    LweSample* integerpart = new_gate_bootstrapping_ciphertext_array(bitsize, params);
     LweSample* fractionpart = new_gate_bootstrapping_ciphertext_array(bitsize, params);
 
     const int32_t n = params->in_out_params->n;
@@ -709,6 +716,9 @@ static int decryptdouble(lua_State *L){
     for(int i=0; i<32; i++){
         ifstream inputfile ("doubletobedecrypted" + to_string(i)+ ".txt");
         if (is_file_empty(inputfile)){
+            delete_gate_bootstrapping_secret_keyset(key);
+            delete_gate_bootstrapping_ciphertext_array(bitsize, integerpart);
+            delete_gate_bootstrapping_ciphertext_array(bitsize, fractionpart);
             lua_pushnil(L);
             return 1;
         }
@@ -726,16 +736,16 @@ static int decryptdouble(lua_State *L){
             // std::cout << "*ciphertext1[" << i << "]->a = " << *(ciphertext1[i].a + sizeof(Torus32) * j) <<std::endl;
             // *(answer[i].a + sizeof(answer[i].a) * j) = *(ciphertext1[i].a + sizeof(ciphertext1[i].a) * j);
             getline(inputfile, line);
-            intergerpart[i].a[j] = stoi(line);
+            integerpart[i].a[j] = stoi(line);
         
         }
         // std::cout << "ciphertext1[" << i << "]->b = " << ciphertext1[i].b << std::endl;
         // std::cout << "ciphertext1[" << i << "]->current_variance = " << ciphertext1[i].current_variance << std::endl;
         // *answer[i].a = *ciphertext1[i].a;
         getline(inputfile, line);
-        intergerpart[i].b = stoi(line);
+        integerpart[i].b = stoi(line);
         getline(inputfile, line);
-        intergerpart[i].current_variance = stod(line);
+        integerpart[i].current_variance = stod(line);
         inputfile.close();
     }
 
@@ -773,13 +783,17 @@ static int decryptdouble(lua_State *L){
 
 
     Double thisdouble;
-    thisdouble.integerpart = intergerpart;
+    thisdouble.integerpart = integerpart;
     thisdouble.fractionpart = fractionpart;
 
     double decrypted = decryptDouble(thisdouble,key);
 
     // std::cout << "answer = " << int_answer << std::endl;
     
+    delete_gate_bootstrapping_secret_keyset(key);
+    delete_gate_bootstrapping_ciphertext_array(bitsize, integerpart);
+    delete_gate_bootstrapping_ciphertext_array(bitsize, fractionpart);
+
     lua_pushnumber(L, decrypted);
     return 1;
 }
