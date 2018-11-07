@@ -118,6 +118,8 @@ function insert_handler(query)
         -- proxy.queries:append(3, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true});
     end            
 
+    os.remove("encryptedInteger.txt")
+
     return proxy.PROXY_SEND_QUERY
 
 end
@@ -212,7 +214,7 @@ function insertdouble_handler(query)
         end
         -- proxy.queries:append(3, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true});
     end            
-
+    os.remove("encrypteddouble.txt")
     return proxy.PROXY_SEND_QUERY
 
 end
@@ -458,7 +460,7 @@ function selectdouble_handler(query)
         modifiedquery = "select * from ciphertext_fraction_bit" .. i .. " where userid = " .. id 
 
         -- print("modifiedquery = " .. modifiedquery)
-        proxy.queries:append((-5-(numbits-1)-i), string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+        proxy.queries:append((-6-(numbits-1)-i), string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
     end    
 
     -- for i=0,15,1
@@ -837,7 +839,7 @@ function read_query_result(inj)
 
             --delete datatobedecrypted files that were created
             --TODO: fix numbits-2 to some expression that involves numberofintegerbits and numberoffractionbits
-            for i=0,(2*numbits-2),1 do
+            for i=0,(2*numbits-1),1 do
                 os.remove("doubletobedecrypted" .. i .. ".txt")
             end
 
