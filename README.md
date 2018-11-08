@@ -1,1 +1,0 @@
-# mysqlproxy_product
