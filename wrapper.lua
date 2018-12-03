@@ -1,4 +1,4 @@
-directorypath = os.getenv("PROXYDIR")
+directorypath = os.getenv("PROXYDIR2")
 
 package.cpath = directorypath .. "/tfhelib.so"
 
@@ -297,6 +297,104 @@ function dropdouble_handler(query)
     return proxy.PROXY_SEND_QUERY
 end
 
+function createudf_handler(query)
+   
+    modifiedquery = "drop function if exists metaphon" 
+    proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+    modifiedquery = "drop function if exists avgcost" 
+    proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+    modifiedquery = "drop function if exists comparison" 
+    proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+    modifiedquery = "drop function if exists testfunction" 
+    proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+    -- modifiedquery = "create function metaphon RETURNS STRING SONAME 'udf_example.so'"
+    modifiedquery = "create function metaphon RETURNS STRING SONAME 'tfhe_udf_cpp.so'" 
+    -- print("modifiedquery = " .. modifiedquery)
+    proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+    -- modifiedquery = "create function avgcost RETURNS REAL SONAME 'udf_example.so'" 
+    modifiedquery = "create function avgcost RETURNS REAL SONAME 'tfhe_udf_cpp.so'" 
+    proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+    -- proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+
+    modifiedquery = "create function testfunction RETURNS INTEGER SONAME 'tfhe_udf_cpp.so'" 
+    proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+
+    modifiedquery = "drop function if exists comparison" 
+    proxy.queries:append(1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+    modifiedquery = "create function comparison RETURNS INTEGER SONAME 'tfhe_udf_cpp.so'" 
+    proxy.queries:append(-1, string.char(proxy.COM_QUERY) .. modifiedquery, {resultset_is_needed = true})
+
+    return proxy.PROXY_SEND_QUERY
+end
+
+function insertcts_handler(query)
+
+    for k=0,999,1
+        do
+        id = k
+        value = k
+
+        mylib.HOMencrypt(value)
+        
+        file = 'encryptedInteger.txt'
+        lines = lines_from(file)
+
+        linenumber = 1
+
+        for i=0,15,1
+            do
+            modifiedquery = "insert into ciphertext_bit" .. i .. " values("
+            
+            -- whose data this is
+            modifiedquery = modifiedquery .. id .. ", "
+
+            for j = 0,501,1
+            do
+                if j == 501 then
+                    modifiedquery = modifiedquery .. lines[linenumber] .. ")"
+                    linenumber = linenumber + 1
+                    break
+                end
+                modifiedquery = modifiedquery .. lines[linenumber] .. ", "
+                linenumber = linenumber + 1
+                
+            end
+            if ((i == 15) and (k == 999)) then
+                proxy.queries:append(-1, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
+            else
+                proxy.queries:append(3, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
+            end
+        end            
+
+        os.remove("encryptedInteger.txt")   
+    end
+
+    return proxy.PROXY_SEND_QUERY
+end
+
+function insertpts_handler(query)
+    for k=0,999,1
+        do
+        id = k
+        value = k
+
+        modifiedquery = "insert into plaintext values("
+        
+        -- whose data this is
+        modifiedquery = modifiedquery .. id .. ", "
+        modifiedquery = modifiedquery .. value .. ")"
+
+        if (k == 999) then
+            proxy.queries:append(-1, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
+        else
+            proxy.queries:append(3, string.char(proxy.COM_QUERY) .. modifiedquery , {resultset_is_needed = true});
+        end
+          
+    end
+
+    return proxy.PROXY_SEND_QUERY
+end
+
 function read_query(packet)
     if packet:byte() == proxy.COM_QUERY then
         query = packet:sub(2)
@@ -345,6 +443,9 @@ function read_query(packet)
         elseif string.starts(query, "show tablesizes") then
             return size_handler(query)    
         
+        elseif string.starts(query, "create udfs") then
+            return createudf_handler(query)
+
         -- table that contains encrypted double 
         elseif query == "create table ciphertextdouble" then
             return createdouble_handler(query)
@@ -357,6 +458,12 @@ function read_query(packet)
 
         elseif string.starts(query, "select * from ciphertextdouble where ") then
             return selectdouble_handler(query) 
+
+        elseif string.starts(query, "insert ciphertexts") then
+            return insertcts_handler(query) 
+
+        elseif string.starts(query, "insert plaintexts") then
+            return insertpts_handler(query) 
 
         elseif string.starts(query, "generate keys") then 
             mylib.generatekeys()

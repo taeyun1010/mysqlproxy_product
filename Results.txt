@@ -1,0 +1,31 @@
+inserting 1000 rows with encryption took:
+	insert ciphertexts;
+	Query OK, 0 rows affected (28 min 13.03 sec)
+
+inserting 1000 rows without encryption took:
+	insert plaintexts;
+	Query OK, 0 rows affected (1 min 34.31 sec)
+
+tablesizes (in MB):
+
+| product2           | ciphertext_bit3                              |       2.52 |
+| product2           | ciphertext_bit2                              |       2.52 |
+| product2           | ciphertext_bit15                             |       2.52 |
+| product2           | ciphertext_bit14                             |       2.52 |
+| product2           | ciphertext_bit13                             |       2.52 |
+| product2           | ciphertext_bit12                             |       2.52 |
+| product2           | ciphertext_bit11                             |       2.52 |
+| product2           | ciphertext_bit9                              |       2.52 |
+| product2           | ciphertext_bit8                              |       2.52 |
+| product2           | ciphertext_bit10                             |       2.52 |
+| product2           | ciphertext_bit7                              |       2.52 |
+| product2           | ciphertext_bit1                              |       2.52 |
+| product2           | ciphertext_bit6                              |       2.52 |
+| product2           | ciphertext_bit0                              |       2.52 |
+| product2           | ciphertext_bit5                              |       2.52 |
+| product2           | ciphertext_bit4                              |       2.52 |
+| mysql              | help_topic                                   |       0.49 |
+| plaintextfps       | plaintextfps                                 |       0.23 |
+| mysql              | help_keyword                                 |       0.12 |
+| product2           | plaintext                                    |       0.06 |
+

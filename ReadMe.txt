@@ -24,7 +24,7 @@ export PROXYDIR=/full/path/to/mysqlproxy_product
 
 //After that, run the following command to execute mysql-proxy:
 
-mysql-proxy --proxy-lua-script=$PROXYDIR/wrapper.lua --proxy-address=127.0.0.1:3308 --proxy-backend-addresses=localhost:3306 --plugins=proxy --event-threads=4  --max-open-files=1024
+mysql-proxy --proxy-lua-script=$PROXYDIR2/wrapper.lua --proxy-address=127.0.0.1:3308 --proxy-backend-addresses=localhost:3306 --plugins=proxy --event-threads=4  --max-open-files=1024
 
 Here, 3308 can be any port number the proxy will be listening to.
 
@@ -92,3 +92,14 @@ select * from ciphertext where userid=int;
 select * from ciphertextdouble where userid=int;
 
 
+
+select * from mysql.func;
+drop function comparison;
+
+//copy to plugin directory
+sudo cp tfhe_udf_cpp.so /usr/local/mysql/lib/plugin
+
+g++ -shared -o tfhe_udf_cpp.so tfhe_udf.cpp -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -ldl -I/usr/include/mysql -fPIC -ltfhe-spqlios-fma -std=gnu++11
+
+
+gcc -shared -o tfhe_udf.so tfhe_udf.c -L/usr/lib/x86_64-linux-gnu -lmysqlclient -lpthread -lz -lm -lrt -ldl -I/usr/include/mysql -fPIC -std=gnu99
